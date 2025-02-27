@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<html lang="en-US">
+ 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Today's Date</title>
+</head>
+<body>
+
+<div>
+
+
+
+ <script type="text/javascript">
+      let d = new Date()
+      let first = 11
+      let second = 23
+      document.body.innerHTML = "<h1>Today's date is " + d + "</h1>"
+
+  </script>
+
+<script type="text/javascript">
+function myFunction() {
+  document.getElementById("frm1").submit();
+}
+</script>
+ 
+
+
+</div>
+<button id="button">Give inputs</button>
+
+<form id="frm1" action="add?") >
+  First val: <input type="text" name="a"><br>
+  Second val: <input type="text" name="b"><br><br>
+  <input type="button" onclick="myFunction()" value="Submit">
+</form>
+<p id="demo"></p>
+
+<div>
+
+<canvas id="myCanvas" width="1024" height="1024">
+Your browser does not support the canvas tag.
+</canvas>
+
+
+
+<p>
+Testing navigation interface
+
+</div>
+ 
+<script>
+
+
+var canvas = document.getElementById('myCanvas'), /// canvas element
+    ctx = canvas.getContext('2d'),            /// context
+    line = new Line(ctx),                     /// our custom line object
+    img = new Image;                          /// the image for bg
+
+ctx.strokeStyle = '#f0f';                     /// white line for demo
+
+/// start image loading, when done draw and setup 
+img.onload = start;
+img.src = "static/images/UWBprototypeFvT.png";
+var hRatio = canvas.width / img.width ;
+var vRatio = canvas.height / img.height ;
+var ratio = Math.min ( hRatio, vRatio );
+
+/// ctx.drawImage(img, 0,0, img.width, img.height, 0,0,img.width*ratio, img.height*ratio);
+function start() {
+    /// initial draw of image
+    ctx.drawImage(img, 0, 0,canvas.width, canvas.height);
+
+    /// listen to mouse move (or use jQuery on('mousemove') instead)
+    canvas.onmousemove = updateLine;
+}
+/// updates the line on each mouse move 
+   
+function updateLine(e) {
+
+    /// correct mouse position so it's relative to canvas
+    var r = canvas.getBoundingClientRect(),
+        x = e.clientX - r.left,
+        y = e.clientY - r.top;
+
+    /// draw background image to clear previous line
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    /// update line object and draw it
+    line.x1 = x;
+    line.y1 = 0;
+    line.x2 = x;
+    line.y2 = canvas.height;
+    line.draw();
+    line.x1 = 0;
+    line.y1 = y;
+    line.x2 = canvas.width;
+    line.y2 = y;
+    line.draw();
+      // Drawing on top of the image
+        ctx.fillStyle = 'blue';
+        ctx.font = '50px Arial';
+        ctx.fillText('UWB navigation interface ', canvas.width/3, 50);
+
+}
+
+/// This lets us define a custom line object which self-draws
+function Line(ctx) {
+
+    var me = this;
+
+    this.x1 = 0;
+    this.x2 = 0;
+    this.y1 = 0;
+    this.y2 = 0;
+
+    /// call this method to update line        
+    this.draw = function() {
+        ctx.beginPath();
+        ctx.moveTo(me.x1, me.y1);
+        ctx.lineTo(me.x2, me.y2);
+        ctx.stroke();
+    }
+}
+</script> 
+
+<script>
+document.getElementById("button").addEventListener("click", function (e) {
+  fetch("http://127.0.0.1/add?a=" + first + "&b=" + second)
+    .then((response) => {
+     return response.json()    })
+      document.getElementById("demo").innerHTML =
+       "When I add " + first + " and " + second + " I get: " + myJson.result}
+    .then((myJson) => {
+      document.getElementById("demo").innerHTML =
+        "When I add " + first + " and " + second + " I get: " + myJson.result
+    })
+    .catch((error) => {
+      let fakeJSON = {
+        result: first + second,
+      } // Only added to simulate
+      document.getElementById("demo").innerHTML =
+        "When I add " + first + " and " + second + " I get fakeerror: " + fakeJSON.result
+    })
+})
+</script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<html lang="en-US">
+ 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta http-equiv="refresh" content="10" > -->
+    <title>Demo</title>
+  <style>
+      .load {
+        float: right;
+        width: 300px;
+        border: 1px solid black;
+        margin-left: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+      }
+      .load th, .load td {
+        padding: 6px;
+       text-align: center;      }
+    </style>
+
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script> 
+<script type="text/javascript" charset="utf-8">
+    var socket = io();
+    socket.on('connect', function() {
+        socket.emit('my event', {data: 'I\'m connected!'});
+    });
+</script>
+
+
+
+<div>
+<p id="timing">  </p>
+ <script type="text/javascript">
+      let d = new Date()
+      let first = 11
+      let second = 23
+      document.getElementById("timing").innerHTML = "Today's date is " + d 
+
+  </script>
+</div>
+
+
+
+
+
+<!--
+<h1> Tool for UWB visualization </h1>
+
+ <div>
+<button id="button">Give inputs</button>
+
+<form id="frm1" action="add?") >
+  First val: <input type="text" name="a"><br>
+  Second val: <input type="text" name="b"><br><br>
+  <input type="button" onclick="myFunction()" value="Submit">
+</form>
+<script type="text/javascript">
+function myFunction() {
+  document.getElementById("frm1").submit();
+}
+</script>
+<p>
+</div>
+-->
+
+<div>
+
+<h1> Concept navigation interface </h1>
+<p>
+    <script>
+    var UWBdata = JSON.parse('{{data| tojson | safe}}');
+    var UWBtest = UWBdata;
+    </script>
+
+<!-- <p> test JSON : <span id="username"></span></p> 
+    
+    <script>
+    var UWBdata = JSON.parse('{{data| tojson | safe}}');
+    var UWBtest = UWBdata;
+    var data2 = UWBtest[2]
+    document.getElementById("username").innerHTML = data2.type + " " + data2.x + "  " + data2.y + " " + data2.z;
+    </script>
+
+-->
+
+
+<canvas id="myCanvas" width="1024" height="1024">
+Your browser does not support the canvas tag.
+</canvas>
+
+
+ <script src="static/js/floordraw.js" </script>
+</div>
+
+
+<script>
+document.getElementById("button").addEventListener("click", function (e) {
+  fetch("http://127.0.0.1/add?a=" + first + "&b=" + second)
+    .then((response) => {
+     return response.json()    })
+      document.getElementById("demo").innerHTML =
+       "When I add " + first + " and " + second + " I get: " + myJson.result}
+    .then((myJson) => {
+      document.getElementById("demo").innerHTML =
+        "When I add " + first + " and " + second + " I get: " + myJson.result
+    })
+    .catch((error) => {
+      let fakeJSON = {
+        result: first + second,
+      } // Only added to simulate
+      document.getElementById("demo").innerHTML =
+        "When I add " + first + " and " + second + " I get fakeerror: " + fakeJSON.result
+    })
+})
+</script>
+
+</body>
+</html>  

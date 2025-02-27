@@ -1,0 +1,21 @@
+<html>
+    <head>
+         
+         
+    </head>
+<body>
+<h1>test</h1> 
+         <script>         
+         const data1 = {{ data|tojson }};
+    
+         console.log("transfer: " + JSON.stringify(data1));
+         console.log("transfer finished");
+</script>
+<script type="text/javascript" src={{ url_for('static', filename="js/app.js")}} >
+        console.log("test2")
+        const data2 = myFunc({{ data|tojson }});
+        console.log("test3");
+        console.log("transfer2: " + JSON.stringify(data2));
+</script>
+</body>
+</html>
