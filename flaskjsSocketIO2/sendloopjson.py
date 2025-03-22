@@ -31,18 +31,13 @@ point4 = {
   "y": 800,
   "z": 600
 }
-rpoint=point
-rpoint3=point3
-rpoint["x"] = point["x"]
-rpoint["y"] = point["y"]
-rpoint3["x"] = point3["x"]
-rpoint3["y"] = point3["y"]
 
-for i in range(-50,50,1):
-    point["x"] = rpoint["x"] + (i *2) % 20 
-    point["y"] = rpoint["y"] + (i *2) % 30
-    point3["x"] = rpoint3["x"] + (i *2) % 10 
-    point3["y"] = rpoint3["y"] + (i *2) % 15
+
+for i in range(-10,10,1):
+    point["x"] = point["x"] + i *5
+    point["y"] = point["y"] + i *5
+    point3["x"] = point3["x"] + i *5
+    point3["y"] = point3["y"] + i *5
     points=list((point,point2,point3,point4))
 # points=point
 # the result is an array of JSON string:

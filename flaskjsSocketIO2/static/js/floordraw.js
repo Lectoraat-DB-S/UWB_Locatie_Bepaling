@@ -8,10 +8,12 @@ ctx.strokeStyle = '#f0f';                     /// white line for demo
 /// start image loading, when done draw and setup 
 img.onload = start;
 img.src = "static/images/UWBprototypeFvT.png";
+/// img.src = "static/images/UWBprototypeL.png";
 var hRatio = canvas.width / img.width ;
 var vRatio = canvas.height / img.height ;
 var ratio = Math.min ( hRatio, vRatio );
 
+/// localhost needs to be the reference
 var socket = io.connect('http://localhost:5000/');
 /// Sen JSON data
 data = {"message": "Hello, server!"};

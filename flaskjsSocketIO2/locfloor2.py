@@ -1,10 +1,9 @@
 # locfloor2.py
-# demonstration of webtechnologies
-
 from flask import Flask, render_template
 from flask_socketio import SocketIO,emit
 from flask import jsonify
 from flask import request
+# from turbo_flask import Turbo
 import json
 import random
 import re
@@ -36,45 +35,29 @@ point3 = {
 }
 
 points=list((point,point2,point3))
+# points=point
+# the result is an array of JSON string:
 print(points)
 
 #----------------------------------------------
-# Origin reference in image
-XIOrigin = 256
-YIOrigin = 256
-XOrigin = 0 
-YOrigin = 0
-ScaleXtoI = 0.1
-ScaleYtoI = 0.1
-# angle 
-DiffAngle = 0
-#
-#------------------------------------------------
-# Creation of ap
-#
-#-----------------------------------------------
 
 app = Flask(__name__)
-
 # 
-# app.config['SECRET_KEY'] = 'secret!'
-import secrets
-app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
+app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-# global variable to communicate with javascript 
+
 global datareceived
 
-# load dummmy values
 datareceived = points
 
-#------------------------------------------------
-# api call is used to
+
+
 # receiving via api call data from interface
 @app.route('/api/data', methods=['POST'])  
 def api_data():
     if request.method == 'POST':
-        # global datareceived
+        global datareceived
         datareceived = request.json 
         socketio.emit("UWBdata", {'data': datareceived})
         return 'JSON data received flask successfully!', 200
