@@ -1,5 +1,7 @@
 # README
 
+# Deze readme is niet up to date! Dit omschrijft niet wat er momenteel op deze branch zit
+
 ## Beschrijving
 Dit project is een realisatie van een locatiebepalingsysteem op basis van UWB. Door de afstand te bepalen tussen een tag (de <ins>bewegende</ins> actor) en meerdere anchors (de <ins>statische</ins> actor), kan aan de hand van **trilateratie** de locatie van een tag bepaald worden.
 
