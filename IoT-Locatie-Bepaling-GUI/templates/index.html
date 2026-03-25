@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UWB Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/socket.io.js') }}"></script>
+
+    <script>
+        let UWBdata = JSON.parse('{{data| tojson | safe}}');
+        let UWBtest = UWBdata;
+    </script>
+</head>
+<body>
+    <div class="grid-container">
+        <!-- Left Panel - Metadata -->
+        <div class="left-panel">
+            <h1>UWB Location UI</h1>
+            <p id="timing"></p>
+            <script type="text/javascript">
+                const d = new Date();
+                const date_string = d.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                document.getElementById("timing").innerHTML = "Current time: " + date_string;
+            </script>
+
+            <div style="display:flex;flex-direction:row;gap:10px;justify-content: center;align-items: center;">
+                <p>Server status: </p>
+                <p id="server-status">Awaiting server status...</p>
+            </div>
+
+            <div class="metadata">
+                <h3>Current selected point</h3>
+                <p id="selected-point">None</p>
+                <h3>Assign anchor to point</h3>
+                <label>
+                    <select style="width:100%;" id="anchor-dropdown">
+                        <option value="none">None</option>
+                        <optgroup label="Anchors" id="anchor-dropdown-opts">
+                            <!-- To be populated by JS -->
+                        </optgroup>
+                    </select>
+                </label>
+
+                <div class="sidebar-button-div">
+                    <button class="point-button" id="assign-anchor">Assign</button>
+                    <button class="point-button" id="reset-anchor">Reset Anchor</button>
+                    <button class="point-button" id="reset-all-anchors">Reset All</button>
+                </div>
+
+                <!-- Add Settings Button -->
+{#                <div class="sidebar-button-div" style="margin-top:10px;">#}
+{#                    <button id="open-settings" class="point-button">Settings</button>#}
+{#                </div>#}
+
+{#                <div class="sidebar-button-div" style="margin-top:10px;">#}
+{#                    <button class="point-button" id="save-config">Save Config</button>#}
+{#                    <button class="point-button" id="load-config">Load Config</button>#}
+{#                </div>#}
+{##}
+{#                <div class="sidebar-button-div" style="margin-top:10px; flex-direction: column;">#}
+{#                    <div style="display:flex; flex-direction:row; gap:10px; width:100%; margin-bottom:10px;">#}
+{#                        <button class="point-button" id="upload-image">Upload Image</button>#}
+{#                        <input type="file" id="image-upload" accept="image/*" style="display:none;">#}
+{#                    </div>#}
+{#                    <div style="display:flex; flex-direction:row; gap:10px; width:100%; align-items:center;">#}
+{#                        <label for="distance-scale">Distance Scale:</label>#}
+{#                        <input type="number" id="distance-scale" min="0.01" max="10" step="0.1" value="0.5" style="flex-grow:1;">#}
+{#                    </div>#}
+{#                </div>#}
+            </div>
+
+            <div class="uwb-log">
+                <h3>UWB Log</h3>
+                <div id="uwb-log-content">
+                    <!-- UWB log content will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Canvas -->
+        <div class="canvas-panel">
+            <div class="canvas-container">
+                <canvas id="myCanvas" width="1024" height="1024">
+                    Your browser does not support the canvas tag.
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+        <div style="background-color:#1e1e1e; margin:15% auto; padding:20px; border:1px solid #444; border-radius:8px; width:400px; color:#e0e0e0;">
+            <h3 style="color:#bb86fc; margin-top:0;">Settings</h3>
+
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <!-- Image Upload Section -->
+                <div>
+                    <h4 style="color:#03dac6; margin-bottom:10px;">Background Image</h4>
+                    <div style="display:flex; flex-direction:row; gap:10px; width:100%;">
+                        <button id="upload-image-settings" class="point-button" style="flex-grow:1;">Upload Image</button>
+                        <input type="file" id="image-upload" accept="image/*" style="display:none;">
+                    </div>
+                </div>
+
+                <!-- Distance Scale Section -->
+                <div>
+                    <h4 style="color:#03dac6; margin-bottom:10px;">Distance Scale</h4>
+                    <div style="display:flex; flex-direction:row; gap:10px; width:100%; align-items:center;">
+                        <label for="distance-scale-settings">Scale:</label>
+                        <input type="number" id="distance-scale-settings" min="0.01" max="10" step="0.01" value="0.5" style="flex-grow:1; padding:8px; background-color:#121212; color:#e0e0e0; border:1px solid #444; border-radius:4px;">
+                    </div>
+                    <div style="display:flex; flex-direction:row; gap:10px; width:100%; margin-top:10px;">
+                        <button id="update-scale-settings" class="point-button" style="flex-grow:1;">Update Scale</button>
+                        <button id="calculate-scale-settings" class="point-button" style="flex-grow:1;">Calculate</button>
+                    </div>
+                </div>
+
+                <!-- Configuration Section -->
+                <div>
+                    <h4 style="color:#03dac6; margin-bottom:10px;">Configuration</h4>
+                    <div style="display:flex; flex-direction:row; gap:10px; width:100%;">
+                        <button id="save-config-settings" class="point-button" style="flex-grow:1;">Save Config</button>
+                        <button id="load-config-settings" class="point-button" style="flex-grow:1;">Load Config</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+                <button id="close-settings-modal" class="point-button">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Distance Scale Calculator Modal -->
+    <div id="scale-calculator-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);z-index:1000;">
+        <div style="background-color:#1e1e1e; margin:15% auto; padding:20px; border:1px solid #444; border-radius:8px; width:300px; color:#e0e0e0;">
+            <h3 style="color:#bb86fc; margin-top:0;">Distance Scale Calculator</h3>
+
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <div>
+                    <label for="pixel-distance">Pixel Distance:</label>
+                    <input id="pixel-distance" type="number" min="1" style="width:100%; margin-top:5px; padding:8px; background-color:#121212; color:#e0e0e0; border:1px solid #444; border-radius:4px;">
+                </div>
+
+                <div>
+                    <label for="real-distance">Real Distance (cm):</label>
+                    <input id="real-distance" type="number" min="0.1" step="0.1" style="width:100%; margin-top:5px; padding:8px; background-color:#121212; color:#e0e0e0; border:1px solid #444; border-radius:4px;">
+                </div>
+
+                <div>
+                    <div>Calculated Scale:</div>
+                    <div id="calculated-scale" style="font-weight:bold; font-size:18px; color:#03dac6; margin-top:5px;">--</div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                <button id="calc-scale-button" class="point-button" style="flex-grow:1; margin-right:10px;">Calculate</button>
+                <button id="apply-scale-button" class="point-button" style="flex-grow:1; margin-right:10px;" disabled>Apply</button>
+                <button id="close-scale-modal" class="point-button" style="flex-grow:1;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/ui_utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/position_calculator.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/data_manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/drawing.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/event_handlers.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/settings_manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/status_pane.js') }}"></script>
+</body>
+</html>
